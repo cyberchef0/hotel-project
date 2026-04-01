@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { formatCurrency, calculateNights } from "@/lib/utils";
 import { HiOutlineCalendar, HiOutlineUsers, HiOutlineCash } from "react-icons/hi";
+import GuestBookingModal from "./GuestBookingModal";
 
 interface BookingFormProps {
   room: {
@@ -16,14 +15,12 @@ interface BookingFormProps {
 }
 
 export default function BookingForm({ room }: BookingFormProps) {
-  const { data: session } = useSession();
-  const router = useRouter();
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [adults, setAdults] = useState(1);
+  const [childrenCount, setChildrenCount] = useState(0);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const nights =
     checkIn && checkOut
@@ -31,12 +28,25 @@ export default function BookingForm({ room }: BookingFormProps) {
       : 0;
   const totalPrice = nights * room.price;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleAdultsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = parseInt(e.target.value);
+    setAdults(val);
+    if (val + childrenCount > room.capacity) {
+      setChildrenCount(room.capacity - val);
+    }
+  };
+
+  const handleChildrenChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = parseInt(e.target.value);
+    setChildrenCount(val);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (!session) {
-      router.push("/login");
+    if (!checkIn || !checkOut) {
+      setError("Please select check-in and check-out dates.");
       return;
     }
 
@@ -45,55 +55,13 @@ export default function BookingForm({ room }: BookingFormProps) {
       return;
     }
 
-    setLoading(true);
-
-    try {
-      // Check availability
-      const availRes = await fetch(
-        `/api/rooms/${room.id}/availability?checkIn=${checkIn}&checkOut=${checkOut}`
-      );
-      const availData = await availRes.json();
-
-      if (!availData.available) {
-        setError("Room is not available for selected dates");
-        setLoading(false);
-        return;
-      }
-
-      // Create booking
-      const bookRes = await fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ roomId: room.id, checkIn, checkOut, guests }),
-      });
-
-      if (!bookRes.ok) {
-        const data = await bookRes.json();
-        throw new Error(data.error || "Failed to create booking");
-      }
-
-      setSuccess(true);
-      setTimeout(() => router.push("/dashboard/bookings"), 2000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
+    if (adults + childrenCount > room.capacity) {
+      setError(`This room can only accommodate up to ${room.capacity} guests.`);
+      return;
     }
-  };
 
-  if (success) {
-    return (
-      <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-        <h3 className="text-xl font-bold text-green-800 mb-2">Booking Confirmed!</h3>
-        <p className="text-green-600">Redirecting to your bookings...</p>
-      </div>
-    );
-  }
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
@@ -137,22 +105,41 @@ export default function BookingForm({ room }: BookingFormProps) {
           </label>
         </div>
 
-        {/* Guests */}
-        <div className="relative">
+        {/* Guests - Adults */}
+        <div className="relative mt-4">
           <HiOutlineUsers className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <select
-            value={guests}
-            onChange={(e) => setGuests(parseInt(e.target.value))}
+            value={adults}
+            onChange={handleAdultsChange}
             className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm appearance-none"
           >
             {Array.from({ length: room.capacity }, (_, i) => i + 1).map((n) => (
               <option key={n} value={n}>
-                {n} {n === 1 ? "Guest" : "Guests"}
+                {n} {n === 1 ? "Adult" : "Adults"}
               </option>
             ))}
           </select>
           <label className="absolute -top-2 left-3 bg-white px-1 text-xs text-gray-500">
-            Guests
+            Adults
+          </label>
+        </div>
+
+        {/* Guests - Children */}
+        <div className="relative">
+          <HiOutlineUsers className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <select
+            value={childrenCount}
+            onChange={handleChildrenChange}
+            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm appearance-none"
+          >
+            {Array.from({ length: room.capacity - adults + 1 }, (_, i) => i).map((n) => (
+              <option key={n} value={n}>
+                {n} {n === 1 ? "Child" : "Children"}
+              </option>
+            ))}
+          </select>
+          <label className="absolute -top-2 left-3 bg-white px-1 text-xs text-gray-500">
+            Children (Cap: {room.capacity - adults})
           </label>
         </div>
 
@@ -181,13 +168,23 @@ export default function BookingForm({ room }: BookingFormProps) {
 
         <button
           type="submit"
-          disabled={loading || !checkIn || !checkOut}
+          disabled={!checkIn || !checkOut}
           className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl font-semibold hover:from-amber-600 hover:to-amber-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
         >
           <HiOutlineCash className="w-5 h-5" />
-          <span>{loading ? "Booking..." : session ? "Book Now" : "Sign in to Book"}</span>
+          <span>Book Now</span>
         </button>
       </form>
+
+      <GuestBookingModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        room={room}
+        initialCheckIn={checkIn}
+        initialCheckOut={checkOut}
+        initialAdults={adults}
+        initialChildren={childrenCount}
+      />
     </div>
   );
 }

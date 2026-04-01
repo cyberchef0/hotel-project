@@ -13,6 +13,7 @@ const amenityOptions = [
 export default function AddRoomPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -39,10 +40,23 @@ export default function AddRoomPage() {
     setLoading(true);
 
     try {
+      const uploadedImages = [];
+      if (files.length > 0) {
+        for (const file of files) {
+          const uploadData = new FormData();
+          uploadData.append("image", file);
+          const uploadRes = await fetch("/api/upload", { method: "POST", body: uploadData });
+          if (uploadRes.ok) {
+            const { url, publicId } = await uploadRes.json();
+            uploadedImages.push({ url, publicId, category: "ROOM" });
+          }
+        }
+      }
+
       const res = await fetch("/api/rooms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, images: uploadedImages }),
       });
 
       if (res.ok) {
@@ -143,6 +157,21 @@ export default function AddRoomPage() {
               required
             />
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Room Image(s)</label>
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={(e) => {
+              if (e.target.files) {
+                setFiles(Array.from(e.target.files));
+              }
+            }}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 mb-6"
+          />
         </div>
 
         <div>

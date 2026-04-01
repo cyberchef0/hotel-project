@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
-import { HiOutlinePlus, HiOutlinePencil, HiOutlineTrash } from "react-icons/hi";
+import { HiOutlinePlus, HiOutlinePencil } from "react-icons/hi";
+import DeleteRoomButton from "@/components/admin/DeleteRoomButton";
 
 export default async function AdminRoomsPage() {
   const rooms = await prisma.room.findMany({
@@ -71,9 +72,7 @@ export default async function AdminRoomsPage() {
                     >
                       <HiOutlinePencil className="w-4 h-4" />
                     </Link>
-                    <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                      <HiOutlineTrash className="w-4 h-4" />
-                    </button>
+                    <DeleteRoomButton roomId={room.id} />
                   </div>
                 </td>
               </tr>

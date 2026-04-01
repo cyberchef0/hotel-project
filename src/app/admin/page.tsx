@@ -111,8 +111,8 @@ export default async function AdminDashboard() {
               {recentBookings.map((booking) => (
                 <tr key={booking.id} className="border-b border-gray-50 hover:bg-gray-50">
                   <td className="py-4 px-4">
-                    <p className="font-medium text-gray-900">{booking.user.name}</p>
-                    <p className="text-xs text-gray-400">{booking.user.email}</p>
+                    <p className="font-medium text-gray-900">{booking.guestName || booking.user?.name || "Guest"}</p>
+                    <p className="text-xs text-gray-400">{booking.guestEmail || booking.user?.email || "No email"}</p>
                   </td>
                   <td className="py-4 px-4 text-sm text-gray-600">{booking.room.name}</td>
                   <td className="py-4 px-4 text-sm text-gray-600">{formatDate(booking.checkIn)}</td>

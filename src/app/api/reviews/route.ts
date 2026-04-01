@@ -5,10 +5,17 @@ import prisma from "@/lib/prisma";
 
 export async function GET(request: Request) {
   try {
+    const session = await getServerSession(authOptions);
+    const isAdmin = session?.user?.role === "ADMIN";
+
     const { searchParams } = new URL(request.url);
     const roomId = searchParams.get("roomId");
 
-    const where: Record<string, unknown> = { approved: true };
+    const where: Record<string, unknown> = {};
+    if (!isAdmin) {
+      where.approved = true;
+    }
+    
     if (roomId) where.roomId = roomId;
 
     const reviews = await prisma.review.findMany({

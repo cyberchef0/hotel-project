@@ -63,17 +63,27 @@ model Room {
 
 model Booking {
   id         String        @id @default(cuid())
-  userId     String
+  userId     String?
   roomId     String
   checkIn    DateTime
   checkOut   DateTime
-  guests     Int
-  totalPrice Float
-  status     BookingStatus @default(PENDING)
-  paymentId  String?
+  guests          Int
+  adults          Int           @default(1)
+  childrenCount   Int           @default(0)
+  totalPrice      Float
+  status          BookingStatus @default(PENDING)
+  paymentId       String?
+  paymentMethod   String        @default("PAY_AT_HOTEL")
+  guestName       String?
+  guestEmail      String?
+  guestPhone      String?
+  specialRequests String?       @db.Text
+  arrivalTime     String?
+  nationality     String?
+  referenceNumber String?       @unique
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
-  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
   room       Room          @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -109,4 +119,15 @@ model Image {
 
   @@index([category])
   @@index([roomId])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String   @db.Text
+  status    String   @default("UNREAD")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

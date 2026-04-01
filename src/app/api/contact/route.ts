@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { contactSchema } from "@/lib/validations";
+import prisma from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const validatedData = contactSchema.parse(body);
 
-    // In production, send email via service like SendGrid/Resend
-    console.log("Contact form submission:", validatedData);
+    await prisma.contactMessage.create({
+      data: validatedData
+    });
 
     return NextResponse.json({ message: "Message sent successfully" });
   } catch (error) {

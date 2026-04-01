@@ -8,6 +8,7 @@ import {
   HiOutlineStar,
   HiOutlineChartBar,
   HiOutlineArrowLeft,
+  HiOutlineMail,
 } from "react-icons/hi";
 
 export default function AdminLayout({
@@ -22,6 +23,7 @@ export default function AdminLayout({
     { href: "/admin/customers", label: "Customers", icon: HiOutlineUsers },
     { href: "/admin/gallery", label: "Gallery", icon: HiOutlinePhotograph },
     { href: "/admin/reviews", label: "Reviews", icon: HiOutlineStar },
+    { href: "/admin/messages", label: "Messages", icon: HiOutlineMail },
     { href: "/admin/analytics", label: "Analytics", icon: HiOutlineChartBar },
   ];
 

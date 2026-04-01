@@ -31,12 +31,16 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     const body = await request.json();
-    const { roomId, checkIn, checkOut, guests } = body;
+    const { 
+      roomId, checkIn, checkOut, 
+      adults = 1, children = 0,
+      guestName, guestEmail, guestPhone,
+      paymentMethod = "PAY_AT_HOTEL", specialRequests, arrivalTime, nationality 
+    } = body;
+
+    const totalGuests = Number(adults) + Number(children);
 
     // Get room price
     const room = await prisma.room.findUnique({ where: { id: roomId } });
@@ -65,15 +69,27 @@ export async function POST(request: Request) {
     );
     const totalPrice = room.price * nights;
 
+    const referenceNumber = "BKG-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
     const booking = await prisma.booking.create({
       data: {
-        userId: session.user.id,
+        userId: session?.user?.id || undefined,
         roomId,
         checkIn: checkInDate,
         checkOut: checkOutDate,
-        guests,
+        guests: totalGuests,
+        adults: Number(adults),
+        childrenCount: Number(children),
         totalPrice,
         status: "CONFIRMED",
+        paymentMethod,
+        guestName,
+        guestEmail,
+        guestPhone,
+        specialRequests,
+        arrivalTime,
+        nationality,
+        referenceNumber
       },
       include: {
         room: { select: { name: true } },
@@ -86,3 +102,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to create booking" }, { status: 500 });
   }
 }
+

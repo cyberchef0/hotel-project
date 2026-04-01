@@ -65,6 +65,7 @@ export async function POST(request: Request) {
         size: body.size,
         amenities: body.amenities || [],
         featured: body.featured || false,
+        images: body.images ? { create: body.images } : undefined,
       },
     });
 
