@@ -82,6 +82,31 @@ export default function GuestBookingModal({
       }
 
       const data = await res.json();
+      
+      if (formData.paymentMethod === "ONLINE") {
+        const chapaRes = await fetch("/api/chapa/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            bookingId: data.id, 
+            amount: totalPrice,
+            guestEmail: formData.guestEmail,
+            guestName: formData.guestName,
+            guestPhone: formData.guestPhone
+          })
+        });
+        
+        const chapaData = await chapaRes.json();
+        if (!chapaRes.ok) {
+           throw new Error(chapaData.error || "Failed to initialize payment gateway");
+        }
+        
+        if (chapaData.checkoutUrl) {
+           window.location.href = chapaData.checkoutUrl;
+           return;
+        }
+      }
+
       setReferenceNumber(data.referenceNumber);
       setSuccess(true);
     } catch (err: any) {
@@ -183,7 +208,7 @@ export default function GuestBookingModal({
                             <HiOutlineCreditCard className="w-5 h-5 text-amber-600" />
                             <span className="font-semibold text-gray-900">Online Payment</span>
                           </div>
-                          <p className="text-sm text-gray-500 mt-1">Securely pay now with Credit Card or Mobile Money.</p>
+                          <p className="text-sm text-gray-500 mt-1">Securely pay via Chapa (Credit Card, Telebirr, CBE Birr).</p>
                         </div>
                       </label>
                     </div>

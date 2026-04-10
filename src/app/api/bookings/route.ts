@@ -81,7 +81,7 @@ export async function POST(request: Request) {
         adults: Number(adults),
         childrenCount: Number(children),
         totalPrice,
-        status: "CONFIRMED",
+        status: paymentMethod === "PAY_AT_HOTEL" ? "PENDING" : "PENDING", // Webhooks will upgrade this to CONFIRMED
         paymentMethod,
         guestName,
         guestEmail,
