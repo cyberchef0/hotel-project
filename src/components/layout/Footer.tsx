@@ -15,11 +15,11 @@ export default function Footer() {
           <div className="space-y-4">
             <Link href="/" className="flex items-center space-x-2">
               <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">L</span>
+                <span className="text-white font-bold text-xl">G</span>
               </div>
               <div>
                 <span className="text-2xl font-serif font-bold text-white tracking-tight">
-                  Luxe
+                  GrandDima
                 </span>
                 <span className="text-2xl font-serif font-light text-amber-400">
                   Hotel
@@ -27,7 +27,7 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Experience unparalleled luxury and comfort at LuxeHotel. Where
+              Experience unparalleled luxury and comfort at GrandDima Hotel. Where
               every moment becomes an extraordinary memory.
             </p>
           </div>
@@ -73,16 +73,16 @@ export default function Footer() {
               <li className="flex items-start space-x-3">
                 <HiOutlineLocationMarker className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
                 <span className="text-sm text-gray-400">
-                  123 Luxury Avenue, Paradise City, PC 12345
+                  Sebeta, Ethiopia
                 </span>
               </li>
               <li className="flex items-center space-x-3">
                 <HiOutlinePhone className="w-5 h-5 text-amber-400 flex-shrink-0" />
-                <span className="text-sm text-gray-400">+1 (555) 123-4567</span>
+                <span className="text-sm text-gray-400">+251 925313232</span>
               </li>
               <li className="flex items-center space-x-3">
                 <HiOutlineMail className="w-5 h-5 text-amber-400 flex-shrink-0" />
-                <span className="text-sm text-gray-400">info@luxehotel.com</span>
+                <span className="text-sm text-gray-400">granddima@gmail.com</span>
               </li>
             </ul>
           </div>

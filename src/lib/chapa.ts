@@ -15,6 +15,7 @@ export async function initializeChapaTransaction(options: {
     description: string;
   };
 }) {
+  console.log("Chapa Payload:", JSON.stringify(options, null, 2));
   const response = await fetch("https://api.chapa.co/v1/transaction/initialize", {
     method: "POST",
     headers: {
@@ -25,8 +26,12 @@ export async function initializeChapaTransaction(options: {
   });
 
   const data = await response.json();
+  console.log("Chapa Response Status:", response.status, "Data:", data);
   if (!response.ok) {
-    throw new Error(data.message || "Failed to initialize Chapa transaction");
+    const errorMsg = typeof data.message === 'string' ? data.message : 
+                    (typeof data.errors === 'object' ? JSON.stringify(data.errors) : 
+                    (data.message ? JSON.stringify(data.message) : "Failed to initialize Chapa transaction"));
+    throw new Error(errorMsg);
   }
 
   return data;

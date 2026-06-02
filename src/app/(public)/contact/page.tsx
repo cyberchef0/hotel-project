@@ -39,12 +39,12 @@ export default function ContactPage() {
   };
 
   const contactInfo = [
-    { icon: HiOutlinePhone, label: "Phone", value: "+1 (555) 123-4567" },
-    { icon: HiOutlineMail, label: "Email", value: "info@luxehotel.com" },
+    { icon: HiOutlinePhone, label: "Phone", value: "+251 925313232" },
+    { icon: HiOutlineMail, label: "Email", value: "granddima@gmail.com" },
     {
       icon: HiOutlineLocationMarker,
       label: "Address",
-      value: "123 Luxury Avenue, Paradise City, PC 12345",
+      value: "sebeta,ETHIOPIA",
     },
     { icon: HiOutlineClock, label: "Front Desk", value: "24/7 Available" },
   ];

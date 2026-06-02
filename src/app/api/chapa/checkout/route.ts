@@ -11,10 +11,11 @@ export async function POST(request: Request) {
     
     // Fallback to localhost if deployed environment isn't set yet
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    console.log("CHAPA CHECKOUT INIT:", { bookingId, amount, guestEmail, guestName });
 
     const chapaRes = await initializeChapaTransaction({
       amount: amount.toString(),
-      currency: "USD",
+      currency: "ETB",
       email: guestEmail || "hotelguest@example.com",
       first_name: first_name || "Guest",
       last_name: last_name,
@@ -27,6 +28,8 @@ export async function POST(request: Request) {
         description: `Payment for Room Booking`
       }
     });
+
+    console.log("CHAPA RAW SUCCESS RESPONSE:", chapaRes);
 
     return NextResponse.json({ checkoutUrl: chapaRes.data.checkout_url });
   } catch (error: any) {

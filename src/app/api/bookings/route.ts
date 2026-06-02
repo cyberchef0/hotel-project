@@ -71,9 +71,16 @@ export async function POST(request: Request) {
 
     const referenceNumber = "BKG-" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
+    // Verify the session user exists in DB — prevents foreign key crash with stale sessions
+    let validUserId: string | undefined = undefined;
+    if (session?.user?.id) {
+      const userExists = await prisma.user.findUnique({ where: { id: session.user.id } });
+      if (userExists) validUserId = session.user.id;
+    }
+
     const booking = await prisma.booking.create({
       data: {
-        userId: session?.user?.id || undefined,
+        userId: validUserId,
         roomId,
         checkIn: checkInDate,
         checkOut: checkOutDate,

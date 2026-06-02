@@ -7,26 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
-enum BookingStatus {
-  PENDING
-  CONFIRMED
-  CANCELLED
-  COMPLETED
-}
-
-enum ImageCategory {
-  ROOM
-  LOBBY
-  RESTAURANT
-  EXTERIOR
-  AMENITY
-}
-
 model User {
   id             String    @id @default(cuid())
   name           String?
@@ -45,7 +25,7 @@ model Room {
   id               String    @id @default(cuid())
   name             String
   slug             String    @unique
-  description      String    @db.Text
+  description      String
   shortDescription String    @db.VarChar(255)
   type             String
   price            Float
@@ -56,17 +36,17 @@ model Room {
   available        Boolean   @default(true)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
-  images           Image[]
   bookings         Booking[]
+  images           Image[]
   reviews          Review[]
 }
 
 model Booking {
-  id         String        @id @default(cuid())
-  userId     String?
-  roomId     String
-  checkIn    DateTime
-  checkOut   DateTime
+  id              String        @id @default(cuid())
+  userId          String?
+  roomId          String
+  checkIn         DateTime
+  checkOut        DateTime
   guests          Int
   adults          Int           @default(1)
   childrenCount   Int           @default(0)
@@ -77,14 +57,14 @@ model Booking {
   guestName       String?
   guestEmail      String?
   guestPhone      String?
-  specialRequests String?       @db.Text
+  specialRequests String?
   arrivalTime     String?
   nationality     String?
   referenceNumber String?       @unique
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-  user       User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  room       Room          @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  room            Room          @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user            User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([roomId])
@@ -96,12 +76,12 @@ model Review {
   userId    String
   roomId    String
   rating    Int
-  comment   String   @db.Text
+  comment   String
   approved  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([roomId])
   @@index([userId])
@@ -115,7 +95,7 @@ model Image {
   category  ImageCategory
   roomId    String?
   createdAt DateTime      @default(now())
-  room      Room?         @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  room      Room?         @relation(fields: [roomId], references: [id])
 
   @@index([category])
   @@index([roomId])
@@ -126,8 +106,28 @@ model ContactMessage {
   name      String
   email     String
   subject   String
-  message   String   @db.Text
+  message   String
   status    String   @default("UNREAD")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum ImageCategory {
+  ROOM
+  LOBBY
+  RESTAURANT
+  EXTERIOR
+  AMENITY
 }

@@ -84,6 +84,7 @@ export default function GuestBookingModal({
       const data = await res.json();
       
       if (formData.paymentMethod === "ONLINE") {
+        console.log("Frontend calling /api/chapa/checkout with:", { bookingId: data.id, amount: totalPrice });
         const chapaRes = await fetch("/api/chapa/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -97,11 +98,13 @@ export default function GuestBookingModal({
         });
         
         const chapaData = await chapaRes.json();
+        console.log("Frontend received from /api/chapa/checkout:", chapaData, "Status:", chapaRes.status);
         if (!chapaRes.ok) {
            throw new Error(chapaData.error || "Failed to initialize payment gateway");
         }
         
         if (chapaData.checkoutUrl) {
+           console.log("Frontend redirecting to Chapa checkoutUrl:", chapaData.checkoutUrl);
            window.location.href = chapaData.checkoutUrl;
            return;
         }
@@ -110,7 +113,9 @@ export default function GuestBookingModal({
       setReferenceNumber(data.referenceNumber);
       setSuccess(true);
     } catch (err: any) {
-      setError(err.message);
+      const msg = err.message || (typeof err === 'string' ? err : "An error occurred");
+      setError(typeof msg === 'string' ? msg : JSON.stringify(msg));
+      console.error(err);
     } finally {
       setLoading(false);
     }
