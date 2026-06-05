@@ -25,11 +25,11 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-700 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">G</span>
+              <span className="text-white font-bold text-xl">H</span>
             </div>
             <div>
               <span className="text-2xl font-serif font-bold text-gray-900 tracking-tight">
-                GrandDima
+                Hadmes
               </span>
               <span className="text-2xl font-serif font-light text-amber-600">
                 Hotel

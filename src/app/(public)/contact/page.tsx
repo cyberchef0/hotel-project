@@ -39,12 +39,12 @@ export default function ContactPage() {
   };
 
   const contactInfo = [
-    { icon: HiOutlinePhone, label: "Phone", value: "+251 925313232" },
-    { icon: HiOutlineMail, label: "Email", value: "granddima@gmail.com" },
+    { icon: HiOutlinePhone, label: "Phone", value: "+251 930100018" },
+    { icon: HiOutlineMail, label: "Email", value: "Hadmeshotel@gmail.com" },
     {
       icon: HiOutlineLocationMarker,
       label: "Address",
-      value: "sebeta,ETHIOPIA",
+      value: "Alemgena,ETHIOPIA",
     },
     { icon: HiOutlineClock, label: "Front Desk", value: "24/7 Available" },
   ];

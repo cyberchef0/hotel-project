@@ -261,7 +261,7 @@ export default async function HomePage() {
             <div className="flex items-start space-x-3 mb-4">
               <HiOutlineLocationMarker className="w-6 h-6 text-amber-500 flex-shrink-0 mt-0.5" />
               <p className="text-gray-600">
-                123 Luxury Avenue, Paradise City, PC 12345
+                123 Sebeta, Ethiopia
               </p>
             </div>
             <Link

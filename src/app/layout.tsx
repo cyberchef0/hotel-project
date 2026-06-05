@@ -4,9 +4,9 @@ import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 
 export const metadata: Metadata = {
-  title: "GrandDima | Premium Luxury Accommodation",
+  title: "RobsanHotel | Premium Luxury Accommodation",
   description:
-    "Experience unparalleled luxury at LuxeHotel. Browse our exquisite rooms, book your perfect stay, and create unforgettable memories.",
+    "Experience unparalleled luxury at RobsanHotel. Browse our exquisite rooms, book your perfect stay, and create unforgettable memories.",
   keywords: "luxury hotel, hotel booking, premium rooms, vacation, travel",
 };
 
